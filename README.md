@@ -61,7 +61,7 @@ npm run start:dev
 - Database:
    - TypeORM is used to manage MySQL database.
 - Rate Limiting:
-  - Using nest-rate-limter to configure rate limiting for endpints
+  - Limits the number of API requests per user(10 requests per minute).
 
 
 ## API Documentation

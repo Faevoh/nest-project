@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put, UseGuards } fro
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { ProductEntity } from './entities/product.entity';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 
@@ -11,7 +11,8 @@ import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post(':userId')
+  
+  @ApiOperation({summary: 'Create new product with user id'})
   @ApiBody({type: CreateProductDto})
   @ApiCreatedResponse({description: 'Product created', type: ProductEntity})
   @ApiNotFoundResponse({description: 'No user found'})
@@ -20,22 +21,26 @@ export class ProductsController {
   @ApiParam({name: 'userId', type: String, description: 'user uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Post(':userId')
   create(@Param('userId') userId: string, @Body() createProductDto: CreateProductDto) {
     return this.productsService.create(userId, createProductDto);
   }
 
-  @Get()
+  
+  @ApiOperation({summary: 'Get all products'})
   @ApiOkResponse({description: 'products retrieved successfully'})
   @ApiNotFoundResponse({description: 'No product found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
   @ApiUnauthorizedResponse({description: 'Invalid access token or unauthorized route'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Get()
   findAll() {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
+  
+  @ApiOperation({summary: 'Get one product'})
   @ApiOkResponse({description: 'product retrieved successfully'})
   @ApiNotFoundResponse({description: 'product not found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
@@ -43,11 +48,13 @@ export class ProductsController {
   @ApiParam({name: 'id', type: String, description: 'product uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productsService.findOne(id);
   }
 
-  @Put(':productId')
+  
+  @ApiOperation({summary: 'Update an existing product'})
   @ApiBody({type: UpdateProductDto})
   @ApiOkResponse({description: 'product updated successfully'})
   @ApiNotFoundResponse({description: 'product not found'})
@@ -56,11 +63,13 @@ export class ProductsController {
   @ApiParam({name: 'id', type: String, description: 'product uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Put(':productId')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.update(id, updateProductDto);
   }
 
-  @Delete(':id')
+  
+  @ApiOperation({summary: 'Delete a product'})
   @ApiOkResponse({description: 'product deleted successfully'})
   @ApiNotFoundResponse({description: 'product not found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
@@ -68,6 +77,7 @@ export class ProductsController {
   @ApiParam({name: 'id', type: String, description: 'product uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
   }

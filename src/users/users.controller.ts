@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateRoleDto } from './dto/update-user-role.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiTags, ApiUnauthorizedResponse, ApiUnprocessableEntityResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse, ApiUnprocessableEntityResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt.auth.guard';
 import { UserEntity } from './entities/user.entity';
 
@@ -12,27 +12,32 @@ import { UserEntity } from './entities/user.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  
   @ApiBody({type: CreateUserDto})
+  @ApiOperation({summary: 'Create a new user'})
   @ApiCreatedResponse({description: 'User created', type: UserEntity})
   @ApiUnprocessableEntityResponse({description: 'Email already exists'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
+  @Post()
   create(@Body(ValidationPipe) createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+  
+  @ApiOperation({summary: 'Get all users'})
   @ApiOkResponse({description: 'users retrieved successfully'})
   @ApiNotFoundResponse({description: 'No user found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
   @ApiUnauthorizedResponse({description: 'Invalid access token or unauthorized route'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
+  
+  @ApiOperation({summary: 'Get a user by ID'})
   @ApiOkResponse({description: 'user retrieved successfully'})
   @ApiNotFoundResponse({description: 'No user found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
@@ -40,11 +45,13 @@ export class UsersController {
   @ApiParam({name: 'id', type: String, description: 'user uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOneWithRelations(id);
   }
 
-  @Patch(':id/role')
+  
+  @ApiOperation({summary: 'Update a user role'})
   @ApiOkResponse({description: 'user role updated successfully'})
   @ApiNotFoundResponse({description: 'No user found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
@@ -54,11 +61,13 @@ export class UsersController {
   @ApiBody({type: UpdateRoleDto})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Patch(':id/role')
   updateRole(@Param('id') id: string, @Body(ValidationPipe) updateRoleDto: UpdateRoleDto) {
     return this.usersService.updateRole(id, updateRoleDto)
   }
 
-  @Put(':id')
+  
+  @ApiOperation({summary: 'update an existing user'})
   @ApiBody({type: UpdateUserDto})
   @ApiOkResponse({description: 'user updated successfully'})
   @ApiNotFoundResponse({description: 'No user found'})
@@ -67,11 +76,13 @@ export class UsersController {
   @ApiParam({name: 'id', type: String, description: 'user uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @Delete(':id')
+  
+  @ApiOperation({summary: 'delete a user'})
   @ApiOkResponse({description: 'user deleted successfully'})
   @ApiNotFoundResponse({description: 'No user found'})
   @ApiInternalServerErrorResponse({description: 'Server error'})
@@ -79,6 +90,7 @@ export class UsersController {
   @ApiParam({name: 'id', type: String, description: 'user uuid'})
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }

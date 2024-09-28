@@ -39,9 +39,6 @@ export class UserEntity {
     })
     password: string;
 
-    @Column()
-    phone: string
-
     @Column({default: "user"})
     @ApiProperty({
         description: 'User role by default',
